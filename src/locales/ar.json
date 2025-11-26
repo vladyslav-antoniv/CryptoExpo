@@ -1,0 +1,74 @@
+{
+  "welcome": {
+    "title": "استثمر في المستقبل",
+    "realEstate": "عقارات",
+    "etfs": "صناديق الاستثمار",
+    "crypto": "عملات رقمية",
+    "lending": "إقراض",
+    "commodities": "سلع",
+    "signIn": "تسجيل الدخول",
+    "signUp": "اشتراك"
+  },
+  "auth": {
+    "signInTitle": "تسجيل الدخول",
+    "signUpTitle": "اشتراك",
+    "personalAccount": "حساب شخصي",
+    "name": "الاسم",
+    "namePlaceholder": "اسمك",
+    "email": "البريد الإلكتروني",
+    "emailPlaceholder": "name@example.com",
+    "username": "اسم المستخدم",
+    "password": "كلمة المرور",
+    "continue": "متابعة",
+    "createAccount": "إنشاء حساب",
+    "loginError": "فشل تسجيل الدخول",
+    "registerError": "فشل التسجيل"
+  },
+  "pin": {
+    "createTitle": "إنشاء رمز سري",
+    "repeatTitle": "كرر الرمز السري",
+    "subtitle": "أدخل رمزاً من 5 أرقام",
+    "errorLength": "يرجى إدخال رمز من 5 أرقام.",
+    "errorMatch": "الرموز لا تتطابق. حاول مرة أخرى.",
+    "biometricsTitle": "تفعيل Face ID؟",
+    "biometricsMsg": "هل ترغب في استخدام Face ID لتسجيل دخول أسرع؟",
+    "yes": "نعم",
+    "no": "لا"
+  },
+  "home": {
+    "hello": "مرحبا",
+    "yourName": "اسمك",
+    "testTask": "مهمة اختبار",
+    "goToCall": "اذهب للاتصال",
+    "beforeStart": "قبل أن تبدأ",
+    "linkBank": "ربط حسابك\nالبنكي",
+    "addWallet": "إضافة\nمحفظة",
+    "posts": "المشاركات",
+    "steps2": "خطوتين",
+    "steps3": "3 خطوات"
+  },
+  "postDetails": {
+    "about": "حول",
+    "loremTitle": "ما هو لوريم إيبسوم؟",
+    "comments": "تعليقات",
+    "back": "رجوع",
+    "defaultBody": "لوريم إيبسوم هو ببساطة نص وهمي من صناعة الطباعة والتنضيد."
+  },
+  "settings": {
+    "title": "الإعدادات",
+    "basic": "أساسي",
+    "other": "أخرى",
+    "language": "اللغة",
+    "logout": "تسجيل خروج"
+  },
+  "search": {
+    "title": "بحث",
+    "placeholder": "البحث عن المنتجات...",
+    "notFound": "لم يتم العثور على نتائج"
+  },
+  "tabs": {
+    "home": "الرئيسية",
+    "portfolio": "محفظة",
+    "profile": "الملف الشخصي"
+  }
+}

@@ -9,10 +9,13 @@ import {
   ActivityIndicator 
 } from 'react-native';
 import axios from 'axios';
+import { useTranslation } from 'react-i18next'; 
 import { ORANGE_COLOR } from '../constants/colors';
+
 import SearchIcon from '../images/menu/item 3.svg'; 
 
 export default function SearchScreen() {
+  const { t } = useTranslation(); 
   const [search, setSearch] = useState('');
   const [filteredDataSource, setFilteredDataSource] = useState<any[]>([]);
   const [masterDataSource, setMasterDataSource] = useState<any[]>([]);
@@ -56,7 +59,7 @@ export default function SearchScreen() {
       <View style={styles.itemStyle}>
         <Text style={styles.idText}>ID: {item.id}</Text>
         <Text style={styles.titleText}>
-           Name: {item.title.charAt(0).toUpperCase() + item.title.slice(1)}
+           {t('auth.name')}: {item.title.charAt(0).toUpperCase() + item.title.slice(1)}
         </Text>
       </View>
     );
@@ -65,12 +68,10 @@ export default function SearchScreen() {
   return (
     <SafeAreaView style={styles.containerWhite}>
       <View style={styles.container}>
-        <Text style={styles.headerTitle}>Search</Text>
+        <Text style={styles.headerTitle}>{t('search.title')}</Text>
         
-        {/* Поле пошуку */}
         <View style={styles.searchSection}>
             <View style={{ paddingLeft: 12 }}>
-               {/* Лупа (сіра) */}
                <SearchIcon width={20} height={20} fill="#999" /> 
             </View>
             
@@ -78,7 +79,7 @@ export default function SearchScreen() {
               style={styles.input}
               onChangeText={(text) => searchFilterFunction(text)}
               value={search}
-              placeholder="Search Products..."
+              placeholder={t('search.placeholder')}
               placeholderTextColor="#999"
             />
         </View>
@@ -93,7 +94,7 @@ export default function SearchScreen() {
              showsVerticalScrollIndicator={false}
              contentContainerStyle={{ paddingBottom: 20 }}
              ListEmptyComponent={
-               <Text style={styles.emptyText}>No posts found</Text>
+               <Text style={styles.emptyText}>{t('search.notFound')}</Text>
              }
            />
         )}

@@ -1,9 +1,9 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { useTranslation } from 'react-i18next';
 import { ORANGE_COLOR } from '../constants/colors';
 
-// Screens
 import SplashScreen from '../screens/SplashScreen';
 import WelcomeScreen from '../screens/WelcomeScreen';
 import SignUpScreen from '../screens/SignUpScreen';
@@ -13,8 +13,8 @@ import HomeScreen from '../screens/HomeScreen';
 import SearchScreen from '../screens/SearchScreen';
 import SettingsScreen from '../screens/SettingsScreen';
 import PostDetailsScreen from '../screens/PostDetailsScreen';
+import LanguageScreen from '../screens/LanguageScreen';
 
-// Icons for Tabs
 import HomeIcon from '../images/menu/item 1.svg';
 import HomeActive from '../images/menu/item 1-active.svg';
 import PortfolioIcon from '../images/menu/item 2.svg';
@@ -25,10 +25,12 @@ import ProfileActive from '../images/menu/item 4-active.svg';
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
-// Налаштування нижнього меню (Tabs)
 function HomeTabs() {
+  const { t, i18n } = useTranslation();
+
   return (
     <Tab.Navigator 
+      key={i18n.language} 
       screenOptions={{ 
         headerShown: false, 
         tabBarActiveTintColor: ORANGE_COLOR, 
@@ -55,13 +57,15 @@ function HomeTabs() {
         name="Home" 
         component={HomeScreen} 
         options={{ 
+            tabBarLabel: t('tabs.home'), 
             tabBarIcon: ({focused}) => focused ? <HomeActive width={24} height={24}/> : <HomeIcon width={24} height={24}/> 
         }} 
       />
       <Tab.Screen 
         name="Portfolio" 
-        component={HomeScreen} // Заглушка
+        component={HomeScreen} 
         options={{ 
+            tabBarLabel: t('tabs.portfolio'),
             tabBarIcon: () => <PortfolioIcon width={24} height={24}/> 
         }} 
       />
@@ -69,6 +73,7 @@ function HomeTabs() {
         name="Search" 
         component={SearchScreen} 
         options={{ 
+            tabBarLabel: t('search.title'), 
             tabBarIcon: () => <SearchIcon width={24} height={24}/> 
         }} 
       />
@@ -76,6 +81,7 @@ function HomeTabs() {
         name="Profile" 
         component={SettingsScreen} 
         options={{ 
+            tabBarLabel: t('tabs.profile'),
             tabBarIcon: ({focused}) => focused ? <ProfileActive width={24} height={24}/> : <ProfileIcon width={24} height={24}/> 
         }} 
       />
@@ -83,7 +89,6 @@ function HomeTabs() {
   );
 }
 
-// Головний стек навігації
 export default function AppNavigator() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
@@ -92,8 +97,10 @@ export default function AppNavigator() {
         <Stack.Screen name="SignUp" component={SignUpScreen} />
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="PinCode" component={PinCodeScreen} />
+        
         <Stack.Screen name="HomeTabs" component={HomeTabs} />
         <Stack.Screen name="PostDetails" component={PostDetailsScreen} />
+        <Stack.Screen name="Language" component={LanguageScreen} /> 
     </Stack.Navigator>
   );
 }

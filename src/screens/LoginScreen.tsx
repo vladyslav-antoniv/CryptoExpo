@@ -1,216 +1,254 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, SafeAreaView, Alert, Dimensions } from 'react-native';
-import * as LocalAuthentication from 'expo-local-authentication';
-import * as SecureStore from 'expo-secure-store';
+import { 
+  StyleSheet, 
+  Text, 
+  View, 
+  TextInput, 
+  TouchableOpacity, 
+  ScrollView, 
+  Dimensions, 
+  KeyboardAvoidingView, 
+  Platform, 
+  ActivityIndicator, 
+  Alert 
+} from 'react-native';
+import { useForm, Controller } from 'react-hook-form';
+import axios from 'axios'; 
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useTranslation } from 'react-i18next'; // <--- IMPORT
 import { ORANGE_COLOR } from '../constants/colors';
 
-// Images
-import PinDotActive from '../images/pin/Ellipse 99.svg';
-import PinDotInactive from '../images/pin/Ellipse 101.svg';
-import BackspaceIcon from '../images/pin/Union.svg';
-import PinDecorIcon from '../images/pin/img.svg';
-// Використовуємо чорну стрілку
-import ArrowBack from '../images/arrow-dropdown-black.svg';
+import BgLogin from '../images/signUp_login/bg.svg';
+import UserIconGreen from '../images/signUp_login/img.svg'; 
+import EyeIcon from '../images/password/Eye.svg';
+import EyeActiveIcon from '../images/password/Eye (1).svg';
+import ArrowLeft from '../images/arrow-dropdown-black.svg'; 
+import InfoIcon from '../images/signUp_login/Info.svg';
 
-const { width } = Dimensions.get('window');
+const { width, height } = Dimensions.get('window');
 
-export default function PinCodeScreen({ navigation }: any) {
-  const [pin, setPin] = useState("");
-  const [step, setStep] = useState<'create' | 'confirm'>('create');
-  const [firstPin, setFirstPin] = useState(""); 
-  
-  const handlePress = (val: string) => {
-    if (val === 'del') {
-      setPin(p => p.slice(0, -1));
-      return;
+export default function LoginScreen({ navigation }: any) {
+  const { t } = useTranslation(); // <--- HOOK
+  const { control, handleSubmit, formState: { errors } } = useForm({
+    defaultValues: {
+        username: 'emilys', 
+        password: 'emilyspass' 
     }
-    if (pin.length < 5) {
-      const newPin = pin + val;
-      setPin(newPin);
-    }
-  };
+  });
+  const [showPass, setShowPass] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const onContinue = () => {
-    if (pin.length < 5) {
-      Alert.alert("Error", "Please enter a 5-digit code.");
-      return;
-    }
-    handlePinComplete(pin);
-  };
-
-  const handlePinComplete = async (completedPin: string) => {
-    if (step === 'create') {
-      setFirstPin(completedPin);
-      setPin(""); 
-      setStep('confirm'); 
-    } else {
-      if (completedPin === firstPin) {
-        await savePin(completedPin);
-        askForBiometrics();
-      } else {
-        Alert.alert("Error", "Pin codes do not match. Try again.");
-        setPin("");
-        setStep('create'); 
-        setFirstPin("");
-      }
-    }
-  };
-
-  const savePin = async (code: string) => {
+  const onSignIn = async (data: any) => {
+    setIsLoading(true);
     try {
-      await SecureStore.setItemAsync('userPin', code);
-    } catch (e) {
-      console.log(e);
-    }
-  };
+      const response = await axios.post('https://dummyjson.com/auth/login', {
+        username: data.username, 
+        password: data.password,
+      });
 
-  const askForBiometrics = async () => {
-    const hasHardware = await LocalAuthentication.hasHardwareAsync();
-    if (hasHardware) {
-      Alert.alert(
-        "Enable Face ID?",
-        "Would you like to use Face ID for faster login?",
-        [
-          { text: "No", onPress: () => navigation.replace('HomeTabs') },
-          { 
-            text: "Yes", 
-            onPress: async () => {
-              await SecureStore.setItemAsync('useBiometrics', 'true');
-              navigation.replace('HomeTabs');
-            } 
-          }
-        ]
-      );
-    } else {
-      navigation.replace('HomeTabs');
+      const { token, firstName, lastName, image } = response.data;
+      await AsyncStorage.setItem('userToken', token);
+      await AsyncStorage.setItem('userInfo', JSON.stringify({ firstName, lastName, image }));
+
+      setIsLoading(false);
+      navigation.navigate('PinCode');
+
+    } catch (error) {
+      setIsLoading(false);
+      console.error(error);
+      Alert.alert(t('auth.loginError'), "Invalid username or password.");
     }
   };
 
   return (
-    <SafeAreaView style={styles.containerWhite}>
-      
-      <View style={styles.navHeader}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
-           <ArrowBack width={24} height={24} />
-        </TouchableOpacity>
+    <View style={{ flex: 1, backgroundColor: '#F2F2F2' }}>
+      <View style={{ position: 'absolute', top: 0, width: width, height: height }}>
+          <BgLogin width={width} height={height} preserveAspectRatio="xMidYMid slice" />
       </View>
 
-      <View style={styles.content}>
-         
-         {/* Header Text & Icon */}
-         <View style={styles.headerContainer}>
-            <PinDecorIcon width={60} height={60} style={{marginBottom: 20}} />
-            <Text style={styles.title}>
-              {step === 'create' ? 'Create a Pin code' : 'Repeat a Pin code'}
-            </Text>
-            <Text style={styles.subtitle}>Enter 5 digit code</Text>
-         </View>
-
-         {/* Dots */}
-         <View style={styles.dotsContainer}>
-           {[1, 2, 3, 4, 5].map((i) => (
-             <View key={i} style={{ marginHorizontal: 8 }}>
-                {pin.length >= i ? <PinDotActive width={24} height={24}/> : <PinDotInactive width={24} height={24}/>}
-             </View>
-           ))}
-         </View>
-
-         {/* Numpad */}
-         <View style={styles.numpadWrapper}>
-           <View style={styles.numpad}>
-             {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((num) => (
-               <TouchableOpacity 
-                 key={num} 
-                 style={styles.numBtn} 
-                 onPress={() => handlePress(num.toString())}
-               >
-                 <Text style={styles.numText}>{num}</Text>
-               </TouchableOpacity>
-             ))}
-
-             {/* Bottom Row */}
-             <View style={styles.numBtn} />
-
-             <TouchableOpacity style={styles.numBtn} onPress={() => handlePress('0')}>
-               <Text style={styles.numText}>0</Text>
-             </TouchableOpacity>
-
-             <TouchableOpacity style={styles.numBtn} onPress={() => handlePress('del')}>
-                <BackspaceIcon width={24} height={24} />
-             </TouchableOpacity>
-           </View>
-         </View>
-
-         {/* --- CONTINUE BUTTON --- */}
-         <View style={styles.bottomButtonContainer}>
-            <TouchableOpacity style={styles.btnPrimary} onPress={onContinue}>
-               <Text style={styles.btnTextWhite}>Continue</Text>
+      <KeyboardAvoidingView 
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        style={{ flex: 1 }}
+      >
+        <View style={styles.navHeader}>
+            <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
+              <ArrowLeft width={24} height={24} />
             </TouchableOpacity>
-         </View>
+        </View>
 
-      </View>
-    </SafeAreaView>
+        <View style={{ height: 48 }} /> 
+
+        <View style={{ flex: 1 }}>
+            <View style={styles.authCard}>
+              <ScrollView 
+                showsVerticalScrollIndicator={false} 
+                contentContainerStyle={{ flexGrow: 1 }} 
+                bounces={false}
+              >
+                
+                <View style={styles.authHeaderRow}>
+                    <View style={styles.userIconContainer}>
+                      <UserIconGreen width={50} height={50} />
+                    </View>
+                    <View>
+                      <Text style={styles.authTitle}>{t('auth.signInTitle')}</Text>
+                      <Text style={styles.authSubtitle}>{t('auth.personalAccount')}</Text>
+                    </View>
+                </View>
+
+                <View style={styles.divider} />
+
+                <Text style={styles.label}>{t('auth.email')}</Text>
+                <Controller 
+                  control={control} 
+                  name="username"
+                  rules={{ required: true }}
+                  render={({ field: { onChange, value } }) => (
+                    <View style={[styles.inputContainer, errors.username && styles.inputError]}>
+                      <TextInput 
+                        style={styles.inputNoBorder} 
+                        placeholder={t('auth.emailPlaceholder')} 
+                        placeholderTextColor="#999" 
+                        onChangeText={onChange} 
+                        value={value} 
+                        autoCapitalize="none"
+                      />
+                      {errors.username && <InfoIcon width={24} height={24} />}
+                    </View>
+                  )}
+                />
+
+                <Text style={styles.label}>{t('auth.password')}</Text>
+                <Controller 
+                  control={control} 
+                  name="password"
+                  rules={{ required: true, minLength: 6 }}
+                  render={({ field: { onChange, value } }) => (
+                    <View style={[styles.inputContainer, errors.password && styles.inputError]}>
+                      <TextInput 
+                        style={styles.inputNoBorder} 
+                        placeholder="••••••••" 
+                        placeholderTextColor="#999" 
+                        secureTextEntry={!showPass} 
+                        onChangeText={onChange}
+                        value={value}
+                      />
+                      <TouchableOpacity onPress={() => setShowPass(!showPass)}>
+                          {showPass ? <EyeIcon width={24} height={24} /> : <EyeActiveIcon width={24} height={24} />}
+                      </TouchableOpacity>
+                    </View>
+                  )}
+                />
+                
+                <View style={styles.bottomButtonContainer}>
+                  <TouchableOpacity 
+                    style={styles.btnPrimary} 
+                    onPress={handleSubmit(onSignIn)}
+                    disabled={isLoading}
+                  >
+                    {isLoading ? (
+                      <ActivityIndicator color="#FFF" />
+                    ) : (
+                      <Text style={styles.btnTextWhite}>{t('auth.signInTitle')}</Text>
+                    )}
+                  </TouchableOpacity>
+
+                  <TouchableOpacity 
+                    style={{ marginTop: 20, alignItems: 'center' }} 
+                    onPress={() => navigation.navigate('SignUp')}
+                  >
+                      <Text style={{ color: ORANGE_COLOR, fontFamily: 'Inter_600SemiBold', fontSize: 16 }}>
+                        {t('auth.createAccount')}
+                      </Text>
+                  </TouchableOpacity>
+                </View>
+
+              </ScrollView>
+            </View>
+        </View>
+      </KeyboardAvoidingView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  containerWhite: { flex: 1, backgroundColor: '#FFF' },
-  
-  // Стилі хедера навігації
-  navHeader: {
-    paddingHorizontal: 20,
-    paddingTop: 10,
-    zIndex: 10,
+  navHeader: { 
+    paddingHorizontal: 20, 
+    marginTop: Platform.OS === 'android' ? 40 : 60,
   },
   backBtn: {
     width: 40, height: 40, justifyContent: 'center'
   },
-
-  content: { 
+  authCard: {
     flex: 1, 
-    justifyContent: 'space-between', 
-    paddingVertical: 20 
+    backgroundColor: '#FFF', 
+    borderTopLeftRadius: 30, 
+    borderTopRightRadius: 30,
+    paddingHorizontal: 24, 
+    paddingTop: 30, 
+    shadowColor: '#000', 
+    shadowOffset: { width: 0, height: -10 }, 
+    shadowOpacity: 0.15, 
+    shadowRadius: 20, 
+    elevation: 15 
   },
+  authHeaderRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 20 }, 
+  userIconContainer: { marginRight: 15 },
   
-  headerContainer: { alignItems: 'center', marginTop: 10 },
-  title: { fontFamily: 'Inter_700Bold', fontSize: 22, color: '#000', marginBottom: 38 },
-  subtitle: { fontFamily: 'Inter_400Regular', fontSize: 15, color: '#606773' },
-
-  dotsContainer: { flexDirection: 'row', justifyContent: 'center', marginBottom: 20 },
-
-  numpadWrapper: { alignItems: 'center' },
-  numpad: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', width: 300 },
-  
-  numBtn: { 
-    width: 80, 
-    height: 80, 
-    justifyContent: 'center', 
-    alignItems: 'center', 
-    marginHorizontal: 10,
-    marginVertical: 5
-  },
-  numText: { 
-    fontFamily: 'Inter_700Bold', 
-    fontSize: 32, 
+  authTitle: { 
+    fontFamily: 'Inter_500Medium', 
+    fontSize: 22, 
     color: '#000' 
   },
+  authSubtitle: { 
+    fontFamily: 'Inter_400Regular', 
+    fontSize: 15, 
+    color: '#606773',
+    lineHeight: 24 
+  },
+  
+  divider: {
+    width: "100%", height: 1, backgroundColor: '#EBEFF5', marginBottom: 25,
+  },
 
+  label: { 
+    fontFamily: 'Inter_400Regular', 
+    fontSize: 15, 
+    lineHeight: 24,
+    color: '#606773', 
+    marginBottom: 8, 
+    marginLeft: 4 
+  },
+  
+  inputContainer: {
+    height: 52, 
+    borderWidth: 1, 
+    borderColor: '#E5E5E5', 
+    borderRadius: 16,
+    paddingHorizontal: 16, 
+    flexDirection: 'row', 
+    alignItems: 'center', 
+    marginBottom: 24,
+    backgroundColor: '#FFF'
+  },
+  inputError: {
+    borderColor: '#FF3B30'
+  },
+  inputNoBorder: { 
+    flex: 1, 
+    height: 50, 
+    fontFamily: 'Inter_400Regular', 
+    fontSize: 15, 
+    color: '#000' 
+  },
+  
   bottomButtonContainer: {
-    paddingHorizontal: 24,
-    marginBottom: 10, 
+    marginTop: 'auto', marginBottom: 30,
   },
   btnPrimary: {
-    backgroundColor: ORANGE_COLOR, 
-    width: '100%', 
-    height: 56, 
-    borderRadius: 28,
-    alignItems: 'center', 
-    justifyContent: 'center',
-    shadowColor: ORANGE_COLOR, 
-    shadowOffset: { width: 0, height: 4 }, 
-    shadowOpacity: 0.3, 
-    shadowRadius: 8, 
-    elevation: 5
+    backgroundColor: ORANGE_COLOR, width: '100%', height: 56, borderRadius: 28,
+    alignItems: 'center', justifyContent: 'center',
+    shadowColor: ORANGE_COLOR, shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.3, shadowRadius: 8, elevation: 5
   },
   btnTextWhite: { 
     fontFamily: 'Inter_600SemiBold', 

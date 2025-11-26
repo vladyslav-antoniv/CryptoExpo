@@ -1,0 +1,74 @@
+{
+  "welcome": {
+    "title": "Invest in Future",
+    "realEstate": "Real Estate",
+    "etfs": "ETFs",
+    "crypto": "Crypto",
+    "lending": "Lending",
+    "commodities": "Commodities",
+    "signIn": "Sign In",
+    "signUp": "Sign up"
+  },
+  "auth": {
+    "signInTitle": "Sign In",
+    "signUpTitle": "Sign up",
+    "personalAccount": "Personal Account",
+    "name": "Name",
+    "namePlaceholder": "Your name",
+    "email": "E-mail",
+    "emailPlaceholder": "name@example.com",
+    "username": "Username",
+    "password": "Password",
+    "continue": "Continue",
+    "createAccount": "Create Account",
+    "loginError": "Login Failed",
+    "registerError": "Registration failed"
+  },
+  "pin": {
+    "createTitle": "Create a Pin code",
+    "repeatTitle": "Repeat a Pin code",
+    "subtitle": "Enter 5 digit code",
+    "errorLength": "Please enter a 5-digit code.",
+    "errorMatch": "Pin codes do not match. Try again.",
+    "biometricsTitle": "Enable Face ID?",
+    "biometricsMsg": "Would you like to use Face ID for faster login?",
+    "yes": "Yes",
+    "no": "No"
+  },
+  "home": {
+    "hello": "Hello",
+    "yourName": "Your name",
+    "testTask": "Test task",
+    "goToCall": "Go to call",
+    "beforeStart": "Before you Start",
+    "linkBank": "Link your Bank\nAccount",
+    "addWallet": "Add\nwallet",
+    "posts": "Posts",
+    "steps2": "2 steps",
+    "steps3": "3 steps"
+  },
+  "postDetails": {
+    "about": "About",
+    "loremTitle": "What is Lorem Ipsum?",
+    "comments": "Comments",
+    "back": "Back",
+    "defaultBody": "Lorem Ipsum is simply dummy text of the printing and typesetting industry."
+  },
+  "settings": {
+    "title": "Settings",
+    "basic": "Basic",
+    "other": "Other",
+    "language": "Language",
+    "logout": "Log Out"
+  },
+  "search": {
+    "title": "Search",
+    "placeholder": "Search Products...",
+    "notFound": "No posts found"
+  },
+  "tabs": {
+    "home": "Home",
+    "portfolio": "Portfolio",
+    "profile": "Profile"
+  }
+}

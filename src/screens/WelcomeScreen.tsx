@@ -1,8 +1,8 @@
 import React from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, SafeAreaView, StatusBar, Dimensions, Alert } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { ORANGE_COLOR } from '../constants/colors';
 
-// Images
 import BgWelcome from '../images/welcome/bg.svg';
 import VectorLogo from '../images/welcome/1/Vector.svg';
 import IconRealEstate from '../images/welcome/Crowd-real-estate.svg';
@@ -14,8 +14,8 @@ import IconCommodities from '../images/welcome/Commodities.svg';
 const { width, height } = Dimensions.get('window');
 
 export default function WelcomeScreen({ navigation }: any) {
+  const { t } = useTranslation();
   
-  // Функція-заглушка для натискання
   const handlePress = (category: string) => {
     console.log(`Pressed: ${category}`);
   };
@@ -31,13 +31,11 @@ export default function WelcomeScreen({ navigation }: any) {
         <View style={styles.welcomeContent}>
           
           <View style={styles.gridWrapper}>
-            {/* ЛІВА КОЛОНКА */}
             <View style={styles.gridCol}>
                <View style={[styles.cardItem, styles.cardLogo]}>
                   <VectorLogo width={60} height={80} color="#FFF" /> 
                </View>
 
-               {/* Real Estate */}
                <TouchableOpacity 
                  style={styles.cardItem} 
                  onPress={() => handlePress('Real Estate')}
@@ -46,7 +44,6 @@ export default function WelcomeScreen({ navigation }: any) {
                   <IconRealEstate width={164} height={136} style={{marginBottom: 10}} />
                </TouchableOpacity>
 
-               {/* ETFs */}
                <TouchableOpacity 
                  style={styles.cardItem} 
                  onPress={() => handlePress('ETFs')}
@@ -56,9 +53,7 @@ export default function WelcomeScreen({ navigation }: any) {
                </TouchableOpacity>
             </View>
 
-            {/* ПРАВА КОЛОНКА */}
             <View style={[styles.gridCol, { marginTop: 80 }]}> 
-               {/* Lending */}
                <TouchableOpacity 
                  style={styles.cardItem} 
                  onPress={() => handlePress('Lending')}
@@ -67,7 +62,6 @@ export default function WelcomeScreen({ navigation }: any) {
                   <IconLending width={164} height={136} style={{marginBottom: 10}} />
                </TouchableOpacity>
 
-               {/* Commodities */}
                <TouchableOpacity 
                  style={styles.cardItem} 
                  onPress={() => handlePress('Commodities')}
@@ -76,7 +70,6 @@ export default function WelcomeScreen({ navigation }: any) {
                   <IconCommodities width={164} height={136} style={{marginBottom: 10}} />
                </TouchableOpacity>
 
-                {/* Crypto */}
                 <TouchableOpacity 
                   style={styles.cardItem} 
                   onPress={() => handlePress('Crypto')}
@@ -89,11 +82,11 @@ export default function WelcomeScreen({ navigation }: any) {
 
           <View style={styles.bottomButtonsContainer}>
             <TouchableOpacity style={styles.btnTextOnly} onPress={() => navigation.navigate('Login')}>
-               <Text style={styles.textLinkOrange}>Sign In</Text>
+               <Text style={styles.textLinkOrange}>{t('welcome.signIn')}</Text>
             </TouchableOpacity>
             
             <TouchableOpacity style={styles.btnPrimary} onPress={() => navigation.navigate('SignUp')}>
-               <Text style={styles.btnTextWhite}>Sign up</Text>
+               <Text style={styles.btnTextWhite}>{t('welcome.signUp')}</Text>
             </TouchableOpacity>
           </View>
 

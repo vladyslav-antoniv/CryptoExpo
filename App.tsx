@@ -9,10 +9,9 @@ import {
   Inter_600SemiBold, 
   Inter_700Bold 
 } from '@expo-google-fonts/inter';
-
+import './src/i18n';
 import AppNavigator from './src/navigation/AppNavigator';
 
-// Запобігаємо автоматичному прихованню сплеш-скріна, поки шрифти не завантажаться
 SplashScreen.preventAutoHideAsync();
 
 export default function App() {
@@ -25,13 +24,12 @@ export default function App() {
 
   const onLayoutRootView = useCallback(async () => {
     if (fontsLoaded) {
-      // Ховаємо сплеш, коли шрифти готові
       await SplashScreen.hideAsync();
     }
   }, [fontsLoaded]);
 
   if (!fontsLoaded) {
-    return null; // Нічого не показуємо, поки вантажиться
+    return null;
   }
 
   return (

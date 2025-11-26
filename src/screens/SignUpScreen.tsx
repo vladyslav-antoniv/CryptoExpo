@@ -14,9 +14,9 @@ import {
 } from 'react-native';
 import { useForm, Controller } from 'react-hook-form';
 import axios from 'axios'; 
+import { useTranslation } from 'react-i18next';
 import { ORANGE_COLOR } from '../constants/colors';
 
-// Images
 import BgLogin from '../images/signUp_login/bg.svg';
 import UserIconGreen from '../images/signUp_login/img+.svg'; 
 import EyeIcon from '../images/password/Eye.svg';
@@ -28,6 +28,7 @@ const { width, height } = Dimensions.get('window');
 const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
 export default function SignUpScreen({ navigation }: any) {
+  const { t } = useTranslation(); // <--- HOOK
   const { control, handleSubmit, formState: { errors } } = useForm();
   const [showPass, setShowPass] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -51,13 +52,12 @@ export default function SignUpScreen({ navigation }: any) {
     } catch (error) {
       setIsLoading(false);
       console.error(error);
-      Alert.alert("Помилка", "Не вдалося зареєструватися.");
+      Alert.alert("Error", t('auth.registerError'));
     }
   };
 
   return (
     <View style={{ flex: 1, backgroundColor: '#F2F2F2' }}>
-      {/* Фон */}
       <View style={{ position: 'absolute', top: 0, width: width, height: height}}>
           <BgLogin width={width} height={height} preserveAspectRatio="xMidYMid slice" />
       </View>
@@ -66,17 +66,14 @@ export default function SignUpScreen({ navigation }: any) {
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         style={{ flex: 1 }}
       >
-        {/* Хедер */}
         <View style={styles.navHeader}>
-            <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
+            <TouchableOpacity onPress={() => navigation.navigate('Welcome')} style={styles.backBtn}>
               <ArrowLeft width={24} height={24} />
             </TouchableOpacity>
         </View>
 
-        {/* Відступ зверху */}
         <View style={{ height: 80 }} /> 
 
-        {/* Картка */}
         <View style={{ flex: 1 }}>
             <View style={styles.authCard}>
               <ScrollView 
@@ -85,22 +82,19 @@ export default function SignUpScreen({ navigation }: any) {
                 bounces={false}
               >
                 
-                {/* Заголовок з іконкою */}
                 <View style={styles.authHeaderRow}>
                     <View style={styles.userIconContainer}>
                       <UserIconGreen width={50} height={50} />
                     </View>
                     <View>
-                      <Text style={styles.authTitle}>Sign up</Text>
-                      <Text style={styles.authSubtitle}>Personal Account</Text>
+                      <Text style={styles.authTitle}>{t('auth.signUpTitle')}</Text>
+                      <Text style={styles.authSubtitle}>{t('auth.personalAccount')}</Text>
                     </View>
                 </View>
 
-                {/* Полосочка */}
                 <View style={styles.divider} />
 
-                {/* Поле Name */}
-                <Text style={styles.label}>Name</Text>
+                <Text style={styles.label}>{t('auth.name')}</Text>
                 <Controller 
                   control={control} 
                   name="name"
@@ -109,7 +103,7 @@ export default function SignUpScreen({ navigation }: any) {
                     <View style={[styles.inputContainer, errors.name && styles.inputError]}>
                       <TextInput 
                         style={styles.inputNoBorder} 
-                        placeholder="Your Name" 
+                        placeholder={t('auth.namePlaceholder')} 
                         placeholderTextColor="#999" 
                         onChangeText={onChange} 
                         value={value} 
@@ -119,8 +113,7 @@ export default function SignUpScreen({ navigation }: any) {
                   )}
                 />
 
-                {/* Поле Email */}
-                <Text style={styles.label}>E-mail</Text>
+                <Text style={styles.label}>{t('auth.email')}</Text>
                 <Controller 
                   control={control} 
                   name="email"
@@ -129,7 +122,7 @@ export default function SignUpScreen({ navigation }: any) {
                     <View style={[styles.inputContainer, errors.email && styles.inputError]}>
                       <TextInput 
                         style={styles.inputNoBorder} 
-                        placeholder="e-mail@gmail.com" 
+                        placeholder={t('auth.emailPlaceholder')} 
                         placeholderTextColor="#999" 
                         onChangeText={onChange} 
                         value={value} 
@@ -141,8 +134,7 @@ export default function SignUpScreen({ navigation }: any) {
                   )}
                 />
 
-                {/* Поле Password */}
-                <Text style={styles.label}>Password</Text>
+                <Text style={styles.label}>{t('auth.password')}</Text>
                 <Controller 
                   control={control} 
                   name="password"
@@ -164,7 +156,6 @@ export default function SignUpScreen({ navigation }: any) {
                   )}
                 />
                 
-                {/* Кнопка */}
                 <View style={styles.bottomButtonContainer}>
                   <TouchableOpacity 
                     style={styles.btnPrimary} 
@@ -174,7 +165,7 @@ export default function SignUpScreen({ navigation }: any) {
                     {isLoading ? (
                       <ActivityIndicator color="#FFF" />
                     ) : (
-                      <Text style={styles.btnTextWhite}>Continue</Text>
+                      <Text style={styles.btnTextWhite}>{t('auth.continue')}</Text>
                     )}
                   </TouchableOpacity>
                 </View>
@@ -210,8 +201,8 @@ const styles = StyleSheet.create({
   },
   authHeaderRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 20 }, 
   userIconContainer: { marginRight: 15 },
+  plusBadge: { position: 'absolute', bottom: 0, right: 0, backgroundColor: '#FFF', borderRadius: 8, padding: 2 },
   
-  // --- ШРИФТИ ---
   authTitle: { 
     fontFamily: 'Inter_500Medium',
     fontSize: 22, 
@@ -229,7 +220,7 @@ const styles = StyleSheet.create({
   },
 
   label: { 
-    fontFamily: 'Inter_400Regular',
+    fontFamily: 'Inter_400Regular', 
     fontSize: 15, 
     lineHeight: 24,
     color: '#606773', 
@@ -251,11 +242,10 @@ const styles = StyleSheet.create({
   inputError: {
     borderColor: '#FF3B30'
   },
-  // --- ШРИФТИ ДЛЯ INPUT ---
   inputNoBorder: { 
     flex: 1, 
     height: 50, 
-    fontFamily: 'Inter_400Regular',
+    fontFamily: 'Inter_400Regular', 
     fontSize: 15, 
     color: '#000' 
   },
@@ -268,9 +258,8 @@ const styles = StyleSheet.create({
     alignItems: 'center', justifyContent: 'center',
     shadowColor: ORANGE_COLOR, shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.3, shadowRadius: 8, elevation: 5
   },
-  // --- ШРИФТИ ДЛЯ КНОПКИ ---
   btnTextWhite: { 
-    fontFamily: 'Inter_600SemiBold',
+    fontFamily: 'Inter_600SemiBold', 
     fontSize: 18, 
     color: '#FFF' 
   },

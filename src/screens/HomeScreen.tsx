@@ -2,12 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, ScrollView, SafeAreaView, Dimensions, TouchableOpacity, ActivityIndicator } from 'react-native';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useTranslation } from 'react-i18next';
 import { ORANGE_COLOR } from '../constants/colors';
 
-// Images
 import LinkBankIcon from '../images/home/iconx64-white.svg'; 
 import AddWalletIcon from '../images/home/iconx64-green.svg'; 
-import ChevronRight from '../images/home/ArrowLeft.svg'; 
+import ChevronRight from '../images/settings/arrow-dropdown.svg'; 
 import ArrowOrange from '../images/home/arrow-dropdown-orange.svg';
 import ArrowGreen from '../images/home/arrow-dropdown-green.svg';
 import TestTaskImage from '../images/home/img.svg'; 
@@ -16,6 +16,7 @@ import ArrowGreenSmall from '../images/home/arrow-dropdown-green.svg';
 const { width } = Dimensions.get('window');
 
 export default function HomeScreen({ navigation }: any) {
+  const { t } = useTranslation();
   const [posts, setPosts] = useState<any[]>([]);
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -25,18 +26,18 @@ export default function HomeScreen({ navigation }: any) {
   }, []);
 
   const loadData = async () => {
-    // 1. Дані юзера
+    // User
     const userInfo = await AsyncStorage.getItem('userInfo');
     if (userInfo) setUser(JSON.parse(userInfo));
 
     try {
-      // 2. Пости з API
+      // API
       const response = await axios.get('https://jsonplaceholder.typicode.com/posts?_limit=3');
       setPosts(response.data);
       await AsyncStorage.setItem('cachedPosts', JSON.stringify(response.data));
       setLoading(false);
     } catch (error) {
-      // 3. Офлайн режим
+      // OffLine
       const cached = await AsyncStorage.getItem('cachedPosts');
       if (cached) setPosts(JSON.parse(cached));
       setLoading(false);
@@ -53,22 +54,20 @@ export default function HomeScreen({ navigation }: any) {
           showsVerticalScrollIndicator={false}
         >
           
-          {/* --- HEADER INFO --- */}
           <View style={styles.headerInfo}>
-             <Text style={styles.labelName}>Your name</Text>
+             <Text style={styles.labelName}>{t('home.yourName')}</Text>
              <Text style={styles.userName}>
                {user ? `${user.firstName} ${user.lastName}` : 'Jhon doe'}
              </Text>
           </View>
 
-          {/* --- TEST TASK CARD --- */}
           <View style={styles.testTaskCard}>
              <View style={styles.testTaskTextContainer}>
-                <Text style={styles.cardTitleSmall}>Test task</Text>
+                <Text style={styles.cardTitleSmall}>{t('home.testTask')}</Text>
                 <Text style={styles.cardSubtitle}>Lorem ipsum</Text>
                 
                 <TouchableOpacity style={styles.linkRow}>
-                   <Text style={styles.linkText}>Go to call</Text>
+                   <Text style={styles.linkText}>{t('home.goToCall')}</Text>
                    <ArrowGreenSmall width={24} height={24}/>
                 </TouchableOpacity>
              </View>
@@ -78,47 +77,43 @@ export default function HomeScreen({ navigation }: any) {
              </View>
           </View>
 
-          {/* --- BEFORE YOU START --- */}
-          <Text style={styles.sectionTitle}>Before you Start</Text>
+          <Text style={styles.sectionTitle}>{t('home.beforeStart')}</Text>
           <ScrollView 
             horizontal 
             showsHorizontalScrollIndicator={false} 
             style={styles.horizontalScroll}
             contentContainerStyle={{ paddingLeft: 24, paddingRight: 10 }}
           >
-             {/* Card 1 */}
              <TouchableOpacity style={[styles.actionCard, { backgroundColor: '#4E4E4E' }]}>
                 <View style={styles.cardTop}>
                     <View style={styles.iconCircle}>
                        <LinkBankIcon width={48} height={48} />
                     </View>
-                    <Text style={styles.actionTitle}>Link you Bank{'\n'}Account</Text>
+                    <Text style={styles.actionTitle}>{t('home.linkBank')}</Text>
                 </View>
                 
                 <View style={styles.actionFooter}>
-                     <Text style={styles.actionSteps}>2 steps</Text>
+                     <Text style={styles.actionSteps}>{t('home.steps2')}</Text>
                      <ChevronRight width={24} height={24} />
                 </View>
              </TouchableOpacity>
 
-             {/* Card 2 */}
              <TouchableOpacity style={[styles.actionCard, { backgroundColor: '#FF6B6B' }]}>
                 <View style={styles.cardTop}>
                     <View style={styles.iconCircle}>
                        <AddWalletIcon width={48} height={48} />
                     </View>
-                    <Text style={styles.actionTitle}>Add{'\n'}wallet</Text>
+                    <Text style={styles.actionTitle}>{t('home.addWallet')}</Text>
                 </View>
 
                 <View style={styles.actionFooter}>
-                     <Text style={styles.actionSteps}>3 steps</Text>
+                     <Text style={styles.actionSteps}>{t('home.steps3')}</Text>
                      <ChevronRight width={24} height={24} />
                 </View>
              </TouchableOpacity>
           </ScrollView>
 
-          {/* --- POSTS --- */}
-          <Text style={styles.sectionTitle}>Posts</Text>
+          <Text style={styles.sectionTitle}>{t('home.posts')}</Text>
           
           {loading ? (
             <ActivityIndicator color={ORANGE_COLOR} style={{ marginTop: 20 }} />
